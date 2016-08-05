@@ -1,7 +1,7 @@
 # mindstorms-plugin
 
 This project contains the source code for a gradle plugin for the Lego Mindstorms EV3.
-For an example how to use it and to learn how to install java 8 on your EV3 bric, have a look to my [Mindstorms repo](https://github.com/bdeneuter/mindstorms).
+For an example how to use it and to learn how to install java 8 on your EV3 brick, have a look to my [Mindstorms repo](https://github.com/bdeneuter/mindstorms).
 
 ## How to use it
 
