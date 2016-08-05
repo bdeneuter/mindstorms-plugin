@@ -34,3 +34,31 @@ dependencies {
 
 ```
 
+## Configuration
+
+The following properties are expected. You can put them in the gradle.properties file.
+The property brick_host is the IP address from your EV3 on your WiFi network. It should be displayed on the screen of the EV3 brick. It is the second IP address.
+
+```properties
+
+brick_user = root
+brick_host = 192.168.0.104
+brick_home = /home/lejos/programs
+
+```
+
+## Building
+
+Just build your project as a normal Java project in gradle
+
+```
+./gradlew build
+```
+
+## Deploy
+
+To deploy your application to the EV3 brick.
+
+```
+./gradlew copyToRobot
+```
