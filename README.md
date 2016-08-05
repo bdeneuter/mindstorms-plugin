@@ -26,6 +26,9 @@ mindstorms {
 }
 
 ```
+
+The plugin will apply the java plugin and add the [LeJOS EV3 Java API](http://www.lejos.org/ev3/docs/) to your compile classpath. So you can put your source code in the src/main/java folder like a normal java project.
+
 ## Adding extra dependencies
 
 If you want to add extra dependencies:
