@@ -62,3 +62,7 @@ To deploy your application to the EV3 brick.
 ```
 ./gradlew copyToRobot
 ```
+
+## Run
+
+To run your application, select your application on the EV3 brick by using the menu on the brick and launch it.
