@@ -2,6 +2,8 @@
 
 ## How to use it
 
+Add to your build.gradle file:
+
 ```groovy
 
 buildscript {
