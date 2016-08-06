@@ -23,6 +23,18 @@ apply plugin: 'com.github.bdeneuter.mindstorms.ev3'
 mindstorms {
     // Your Java main class (the class with the method: public static void main(String ... args))
     main = 'com.github.bdeneuter.mindstorms.samples.HelloWorld'
+    
+    // Optional: The IP address from the EV3 brick. Default value is 10.0.1.1
+    ip = '10.0.1.1'
+    
+    // Optional: the user for the EV3 brick. Default value is root
+    user = 'root'
+    
+    // Optional: the password for the user of the EV3 brick (Don't check in paswords in repositories! If you use a password, put it in the gradle.properties in your GRADLE_HOME and assign the variable to the password field. Default value is none
+    password = ''
+    
+    // Optional: the directory on the EV3 brick where the applications will be stored. Default is /home/lejos/programs
+    home = '/home/lejos/programs'
 }
 
 ```
@@ -39,19 +51,6 @@ dependencies {
     // example
     compile 'com.google.guava:guava:19.0'
 }
-
-```
-
-## Configuration
-
-The following properties are expected. You can put them in the gradle.properties file.
-The property brick_host is the IP address from your EV3 on your WiFi network. It should be displayed on the screen of the EV3 brick. It is the second IP address.
-
-```properties
-
-brick_user = root
-brick_host = 192.168.0.104
-brick_home = /home/lejos/programs
 
 ```
 
