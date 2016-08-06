@@ -14,7 +14,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.bdeneuter:mindstorms-plugin:1.1.0-beta'
+        classpath 'com.github.bdeneuter:mindstorms-plugin:1.1.0'
     }
 }
 
@@ -73,3 +73,8 @@ To deploy your application to the EV3 brick.
 ## Run
 
 To run your application, select your application on the EV3 brick by using the menu on the brick and launch it.
+Or run your application from gradle with this plugin:
+
+```
+./gradlew launch
+```
