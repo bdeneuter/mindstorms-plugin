@@ -14,7 +14,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.bdeneuter:mindstorms-plugin:1.0.0-beta'
+        classpath 'com.github.bdeneuter:mindstorms-plugin:1.1.0-beta'
     }
 }
 
