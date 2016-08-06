@@ -23,8 +23,6 @@ class Mindstorms implements Plugin<Project> {
         project.extensions.create("mindstorms", MindstormsExtension)
         project.configure(project) {
 
-            println "Main class before: ${project.mindstorms.main}"
-
             apply plugin: 'java'
 
             sourceCompatibility = 1.8
@@ -66,7 +64,7 @@ class Mindstorms implements Plugin<Project> {
 
             jar.dependsOn setManifestAttributes
 
-            project.task(dependsOn: 'assemble', 'copyToRobot') << {
+            project.task(dependsOn: 'assemble', group: 'mindstorms', 'copyToRobot') << {
 
                 ant.taskdef(
                         name: 'scp',
@@ -88,7 +86,7 @@ class Mindstorms implements Plugin<Project> {
 
             }
 
-            project.task(dependsOn: 'copyToRobot', 'launch') << {
+            project.task(dependsOn: 'copyToRobot', group: 'mindstorms', 'launch') << {
 
                 ant.taskdef(
                         name: 'sshexec',
@@ -100,17 +98,12 @@ class Mindstorms implements Plugin<Project> {
                         .find { it.name.endsWith '.jar' }
                 String application = new File("${project.mindstorms.home}", file.getName()).absolutePath
 
-                println "Application to run: " + application
-                println "Main class: ${project.mindstorms.main}"
-
                 ant.sshexec(
                         username: "${project.mindstorms.user}",
                         password: "${project.mindstorms.password}",
                         host: "${project.mindstorms.ip}",
-                        command: "jrun -jar $application",
-                        //command: "pwd",
-                        trust: true,
-                        verbose: true
+                        command: "jrun -cp $application ${project.mindstorms.main}",
+                        trust: true
                 )
             }
 
