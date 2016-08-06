@@ -23,6 +23,8 @@ class Mindstorms implements Plugin<Project> {
         project.extensions.create("mindstorms", MindstormsExtension)
         project.configure(project) {
 
+            println "Main class before: ${project.mindstorms.main}"
+
             apply plugin: 'java'
 
             sourceCompatibility = 1.8
@@ -41,22 +43,28 @@ class Mindstorms implements Plugin<Project> {
                 scp 'org.apache.ant:ant-jsch:1.9.4'
             }
 
-            jar {
+            project.task('setManifestAttributes') << {
 
-                from {
-                    (configurations.runtime).collect {
-                        it.isDirectory() ? it : zipTree(it)
+                jar {
+
+                    from {
+                        (configurations.runtime).collect {
+                            it.isDirectory() ? it : zipTree(it)
+                        }
+                    }
+
+                    manifest {
+                        attributes('Class-Path':
+                                'home/root/lejos/lib/ev3classes.jar ' +
+                                        '/home/root/lejos/lib/dbusjava.jar ' +
+                                        '/home/root/lejos/libjna/usr/share/java/jna.jar',
+                                'Main-Class': "${project.mindstorms.main}")
                     }
                 }
 
-                manifest {
-                    attributes('Class-Path':
-                            'home/root/lejos/lib/ev3classes.jar ' +
-                                    '/home/root/lejos/lib/dbusjava.jar ' +
-                                    '/home/root/lejos/libjna/usr/share/java/jna.jar',
-                            'Main-Class': "${project.mindstorms.main}")
-                }
             }
+
+            jar.dependsOn setManifestAttributes
 
             project.task(dependsOn: 'assemble', 'copyToRobot') << {
 
@@ -71,13 +79,39 @@ class Mindstorms implements Plugin<Project> {
                         .each {
                     ant.scp(
                             file: it,
-                            todir: brick_user + '@' + brick_host + ':' + brick_home,
-                            username: brick_user,
-                            password: '',
+                            todir: "${project.mindstorms.user}" + '@' + "${project.mindstorms.ip}" + ':' + "${project.mindstorms.home}",
+                            username: "${project.mindstorms.user}",
+                            password: "${project.mindstorms.password}",
                             trust: true
                     )
                 }
 
+            }
+
+            project.task(dependsOn: 'copyToRobot', 'launch') << {
+
+                ant.taskdef(
+                        name: 'sshexec',
+                        classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+                        classpath: configurations.scp.asPath)
+
+                File file = new File(buildDir, 'libs')
+                        .listFiles()
+                        .find { it.name.endsWith '.jar' }
+                String application = new File("${project.mindstorms.home}", file.getName()).absolutePath
+
+                println "Application to run: " + application
+                println "Main class: ${project.mindstorms.main}"
+
+                ant.sshexec(
+                        username: "${project.mindstorms.user}",
+                        password: "${project.mindstorms.password}",
+                        host: "${project.mindstorms.ip}",
+                        command: "jrun -jar $application",
+                        //command: "pwd",
+                        trust: true,
+                        verbose: true
+                )
             }
 
         }

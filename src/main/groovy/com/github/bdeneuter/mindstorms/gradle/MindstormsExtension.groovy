@@ -18,5 +18,9 @@ package com.github.bdeneuter.mindstorms.gradle
 class MindstormsExtension {
 
     String main;
+    String user = "root";
+    String password = "";
+    String home = "/home/lejos/programs";
+    String ip = "10.0.1.1";
 
 }
