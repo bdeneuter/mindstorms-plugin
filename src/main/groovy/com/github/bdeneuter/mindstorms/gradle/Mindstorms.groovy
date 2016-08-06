@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.bdeneuter.mindstorms.gradle;
+package com.github.bdeneuter.mindstorms.gradle
 
+import org.gradle.api.AntBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -87,6 +88,8 @@ class Mindstorms implements Plugin<Project> {
             }
 
             project.task(dependsOn: 'copyToRobot', group: 'mindstorms', 'launch') << {
+
+                ant.lifecycleLogLevel = AntBuilder.AntMessagePriority.INFO
 
                 ant.taskdef(
                         name: 'sshexec',
