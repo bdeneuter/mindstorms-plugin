@@ -5,20 +5,33 @@ For an example how to use it and to learn how to install java 8 on your EV3 bric
 
 ## How to use it
 
-Add to your build.gradle file:
+### Add the plugin to your build.gradle file
 
 ```groovy
-
 buildscript {
-    repositories {
-        mavenCentral()
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
-    dependencies {
-        classpath 'com.github.bdeneuter:mindstorms-plugin:1.1.0'
-    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.github.bdeneuter:mindstorms-plugin:1.1.1"
+  }
 }
 
-apply plugin: 'com.github.bdeneuter.mindstorms.ev3'
+apply plugin: "com.github.bdeneuter.mindstorms.ev3"
+```
+
+or use the new plugin api
+
+```groovy
+plugins {
+  id "com.github.bdeneuter.mindstorms.ev3" version "1.1.1"
+}
+```
+### Configure the plugin in your build.gradle file
+
+```groovy
 
 mindstorms {
     // Your Java main class (the class with the method: public static void main(String ... args))
