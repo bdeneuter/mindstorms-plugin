@@ -15,7 +15,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.github.bdeneuter:mindstorms-plugin:1.1.1"
+    classpath "gradle.plugin.com.github.bdeneuter:mindstorms-plugin:1.2.0"
   }
 }
 
@@ -26,7 +26,7 @@ or use the new plugin api
 
 ```groovy
 plugins {
-  id "com.github.bdeneuter.mindstorms.ev3" version "1.1.1"
+  id "com.github.bdeneuter.mindstorms.ev3" version "1.2.0"
 }
 ```
 ### Configure the plugin in your build.gradle file
@@ -91,3 +91,10 @@ Or run your application from gradle with this plugin:
 ```
 ./gradlew launch
 ```
+
+## Shutdown the EV3 brick
+
+```
+./gradlew halt
+```
+
