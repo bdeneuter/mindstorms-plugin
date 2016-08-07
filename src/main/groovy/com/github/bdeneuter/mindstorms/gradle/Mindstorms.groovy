@@ -110,6 +110,22 @@ class Mindstorms implements Plugin<Project> {
                 )
             }
 
+            project.task(group: 'mindstorms', 'halt') << {
+
+                ant.taskdef(
+                        name: 'sshexec',
+                        classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+                        classpath: configurations.scp.asPath)
+
+                ant.sshexec(
+                        username: "${project.mindstorms.user}",
+                        password: "${project.mindstorms.password}",
+                        host: "${project.mindstorms.ip}",
+                        command: "halt",
+                        trust: true
+                )
+            }
+
         }
 
     }
