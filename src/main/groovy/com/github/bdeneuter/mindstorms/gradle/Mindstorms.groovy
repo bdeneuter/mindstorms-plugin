@@ -42,22 +42,24 @@ class Mindstorms implements Plugin<Project> {
                 scp 'org.apache.ant:ant-jsch:1.9.4'
             }
 
-            project.task('setManifestAttributes') << {
+            project.task('setManifestAttributes') {
 
-                jar {
+                doLast {
+                    jar {
 
-                    from {
-                        (configurations.runtime).collect {
-                            it.isDirectory() ? it : zipTree(it)
+                        from {
+                            (configurations.runtime).collect {
+                                it.isDirectory() ? it : zipTree(it)
+                            }
                         }
-                    }
 
-                    manifest {
-                        attributes('Class-Path':
-                                'home/root/lejos/lib/ev3classes.jar ' +
-                                        '/home/root/lejos/lib/dbusjava.jar ' +
-                                        '/home/root/lejos/libjna/usr/share/java/jna.jar',
-                                'Main-Class': "${project.mindstorms.main}")
+                        manifest {
+                            attributes('Class-Path':
+                                    'home/root/lejos/lib/ev3classes.jar ' +
+                                            '/home/root/lejos/lib/dbusjava.jar ' +
+                                            '/home/root/lejos/libjna/usr/share/java/jna.jar',
+                                    'Main-Class': "${project.mindstorms.main}")
+                        }
                     }
                 }
 
@@ -65,65 +67,72 @@ class Mindstorms implements Plugin<Project> {
 
             jar.dependsOn setManifestAttributes
 
-            project.task(dependsOn: 'assemble', group: 'mindstorms', 'copyToRobot') << {
+            project.task(dependsOn: 'assemble', group: 'mindstorms', 'copyToRobot') {
 
-                ant.taskdef(
-                        name: 'scp',
-                        classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
-                        classpath: configurations.scp.asPath)
+                doLast {
+                    ant.taskdef(
+                            name: 'scp',
+                            classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+                            classpath: configurations.scp.asPath)
 
-                new File(buildDir, 'libs')
-                        .listFiles()
-                        .findAll { it.name.endsWith '.jar' }
-                        .each {
-                    ant.scp(
-                            file: it,
-                            todir: "${project.mindstorms.user}" + '@' + "${project.mindstorms.ip}" + ':' + "${project.mindstorms.home}",
+                    new File(buildDir, 'libs')
+                            .listFiles()
+                            .findAll { it.name.endsWith '.jar' }
+                            .each {
+                        ant.scp(
+                                file: it,
+                                todir: "${project.mindstorms.user}" + '@' + "${project.mindstorms.ip}" + ':' + "${project.mindstorms.home}",
+                                username: "${project.mindstorms.user}",
+                                password: "${project.mindstorms.password}",
+                                trust: true
+                        )
+                    }
+                }
+
+            }
+
+            project.task(dependsOn: 'copyToRobot', group: 'mindstorms', 'launch') {
+
+                doLast {
+                    ant.lifecycleLogLevel = AntBuilder.AntMessagePriority.INFO
+
+                    ant.taskdef(
+                            name: 'sshexec',
+                            classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+                            classpath: configurations.scp.asPath)
+
+                    File file = new File(buildDir, 'libs')
+                            .listFiles()
+                            .find { it.name.endsWith '.jar' }
+                    String application = new File("${project.mindstorms.home}", file.getName()).absolutePath
+
+                    ant.sshexec(
                             username: "${project.mindstorms.user}",
                             password: "${project.mindstorms.password}",
+                            host: "${project.mindstorms.ip}",
+                            command: "jrun -cp $application ${project.mindstorms.main}",
                             trust: true
                     )
                 }
 
             }
 
-            project.task(dependsOn: 'copyToRobot', group: 'mindstorms', 'launch') << {
+            project.task(group: 'mindstorms', 'halt') {
 
-                ant.lifecycleLogLevel = AntBuilder.AntMessagePriority.INFO
+                doLast {
+                    ant.taskdef(
+                            name: 'sshexec',
+                            classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+                            classpath: configurations.scp.asPath)
 
-                ant.taskdef(
-                        name: 'sshexec',
-                        classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
-                        classpath: configurations.scp.asPath)
-
-                File file = new File(buildDir, 'libs')
-                        .listFiles()
-                        .find { it.name.endsWith '.jar' }
-                String application = new File("${project.mindstorms.home}", file.getName()).absolutePath
-
-                ant.sshexec(
-                        username: "${project.mindstorms.user}",
-                        password: "${project.mindstorms.password}",
-                        host: "${project.mindstorms.ip}",
-                        command: "jrun -cp $application ${project.mindstorms.main}",
-                        trust: true
-                )
-            }
-
-            project.task(group: 'mindstorms', 'halt') << {
-
-                ant.taskdef(
-                        name: 'sshexec',
-                        classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
-                        classpath: configurations.scp.asPath)
-
-                ant.sshexec(
-                        username: "${project.mindstorms.user}",
-                        password: "${project.mindstorms.password}",
-                        host: "${project.mindstorms.ip}",
-                        command: "halt",
-                        trust: true
-                )
+                    ant.sshexec(
+                            username: "${project.mindstorms.user}",
+                            password: "${project.mindstorms.password}",
+                            host: "${project.mindstorms.ip}",
+                            command: "halt",
+                            trust: true
+                    )
+                }
             }
 
         }
