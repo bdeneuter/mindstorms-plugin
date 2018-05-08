@@ -104,7 +104,7 @@ class Mindstorms implements Plugin<Project> {
                     File file = new File(buildDir, 'libs')
                             .listFiles()
                             .find { it.name.endsWith '.jar' }
-                    String application = new File("${project.mindstorms.home}", file.getName()).absolutePath
+                    String application = "${project.mindstorms.home}/" + file.getName()
 
                     ant.sshexec(
                             username: "${project.mindstorms.user}",
